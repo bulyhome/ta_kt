@@ -1,4 +1,5 @@
 import os.path
+import re
 
 def get_test_scenarios(filename):
     """
@@ -46,4 +47,19 @@ def check_all_tests(l):
             if c not in allowed_comp: return False
         test_level = testname_short_list[1]
         if test_level not in allowed_level: return False
+    return True
+
+
+def check_all_tests_re(l):
+    """
+    Validate the format of the name for *test_scenario.xml using regular expressions
+    :param l: list of tuples (/usr/asm/atl.0000/ZX/ZX_CC_free_text.test_scenario.xml, ASML-BB-040-0200A, ZX).
+    :return: True / False. For empty list True is returned. For invalid argument, False is returned
+    """
+    if not isinstance(l, list): return False
+    for i in l:
+        test_w_path = i[0]
+        testname = test_w_path.split('/')[-1]
+        match_obj = re.match(r'^([A-Z0-9]+)_(FC|BB|CC|SY|UT)_(.*).test_scenario.xml$', testname)
+        if not match_obj: return False
     return True
